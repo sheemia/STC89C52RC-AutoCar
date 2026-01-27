@@ -1,0 +1,45 @@
+C51 COMPILER V9.54   TIMER                                                                 11/24/2025 16:39:28 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE TIMER
+OBJECT MODULE PLACED IN .\Objects\Timer.obj
+COMPILER INVOKED BY: D:\Program Files\Keil_v5\C51\BIN\C51.EXE Timer.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(
+                    -.\Listings\Timer.lst) TABS(2) OBJECT(.\Objects\Timer.obj)
+
+line level    source
+
+   1          #include <REGX52.H>
+   2          
+   3          void Timer_Loop()
+   4          {
+   5   1        if(TimerFlag)
+*** ERROR C202 IN LINE 5 OF Timer.c: 'TimerFlag': undefined identifier
+   6   1        {
+   7   2          MiniSec++;
+*** ERROR C202 IN LINE 7 OF Timer.c: 'MiniSec': undefined identifier
+   8   2          if(MiniSec==100)
+*** ERROR C202 IN LINE 8 OF Timer.c: 'MiniSec': undefined identifier
+   9   2          {
+  10   3            MiniSec=0;
+*** ERROR C202 IN LINE 10 OF Timer.c: 'MiniSec': undefined identifier
+  11   3            Sec++;
+*** ERROR C202 IN LINE 11 OF Timer.c: 'Sec': undefined identifier
+  12   3            if(Sec==60)
+*** ERROR C202 IN LINE 12 OF Timer.c: 'Sec': undefined identifier
+  13   3            {
+  14   4              Sec=0;
+*** ERROR C202 IN LINE 14 OF Timer.c: 'Sec': undefined identifier
+  15   4              Min++;
+*** ERROR C202 IN LINE 15 OF Timer.c: 'Min': undefined identifier
+  16   4              if(Min==60)
+*** ERROR C202 IN LINE 16 OF Timer.c: 'Min': undefined identifier
+  17   4              {
+  18   5                Min=0;
+*** ERROR C202 IN LINE 18 OF Timer.c: 'Min': undefined identifier
+  19   5              }
+  20   4            }
+  21   3          }
+  22   2        }
+  23   1      }
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  10 ERROR(S)

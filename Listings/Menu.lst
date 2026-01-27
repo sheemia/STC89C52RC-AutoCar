@@ -1,0 +1,88 @@
+C51 COMPILER V9.54   MENU                                                                  12/25/2025 20:40:44 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE MENU
+OBJECT MODULE PLACED IN .\Objects\Menu.obj
+COMPILER INVOKED BY: D:\Program Files\Keil_v5\C51\BIN\C51.EXE Menu.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.
+                    -\Listings\Menu.lst) TABS(2) OBJECT(.\Objects\Menu.obj)
+
+line level    source
+
+   1          #include <REGX52.H>
+   2          #include "Oled.h"
+   3          #include "Home.h"
+   4          #include "Key.h"
+   5          
+   6          unsigned char Page,Menu_KeyNumber;
+   7          
+   8          unsigned char Menu()
+   9          {
+  10   1        P0_0=1;
+  11   1        OLED_Clear();
+  12   1        Page=1;
+  13   1        while(1)
+  14   1        {
+  15   2          Menu_KeyNumber=Key();
+  16   2          if(Menu_KeyNumber)
+  17   2          {
+  18   3            switch(Menu_KeyNumber)
+  19   3            {
+  20   4              case 1:
+  21   4              {
+  22   5                Page++;
+  23   5                if(Page>7) Page=1;
+  24   5                break;
+  25   5              }
+  26   4              case 2:
+  27   4              {
+  28   5                Page--;
+  29   5                if(Page<1) Page=7;
+  30   5                break;
+  31   5              }
+  32   4              case 3:
+  33   4              {
+  34   5                switch(Page)
+  35   5                {
+  36   6                  case 1:return 2;break;
+  37   6                  case 2:return 3;break;
+  38   6                  case 3:return 4;break;
+  39   6                  case 4:return 5;break;
+  40   6                  case 5:return 6;break;
+  41   6                  case 6:return 7;break;
+  42   6                  case 7:return 8;break;
+  43   6                }
+  44   5                break;
+  45   5              }
+  46   4              case 4:return 0;break;
+  47   4              case 5:return 0;break;
+  48   4            }
+  49   3          }
+  50   2          
+  51   2          switch(Page)
+  52   2            {
+  53   3              case 1:OLED_ShowString(44,3,"Task1",16);break;
+  54   3              case 2:OLED_ShowString(44,3,"Task2",16);break;
+C51 COMPILER V9.54   MENU                                                                  12/25/2025 20:40:44 PAGE 2   
+
+  55   3              case 3:OLED_ShowString(44,3,"Task3",16);break;
+  56   3              case 4:OLED_ShowString(44,3,"Task4",16);break;
+  57   3              case 5:OLED_ShowString(44,3,"Task5",16);break;
+  58   3              case 6:OLED_ShowString(44,3,"Task6",16);break;
+  59   3              case 7:OLED_ShowString(44,3,"Task7",16);break;
+  60   3            }
+  61   2        }
+  62   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    245    ----
+   CONSTANT SIZE    =     42    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      2    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,82 @@
+C51 COMPILER V9.54   TASK2                                                                 12/25/2025 21:48:40 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE TASK2
+OBJECT MODULE PLACED IN .\Objects\Task2.obj
+COMPILER INVOKED BY: D:\Program Files\Keil_v5\C51\BIN\C51.EXE Task2.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(
+                    -.\Listings\Task2.lst) TABS(2) OBJECT(.\Objects\Task2.obj)
+
+line level    source
+
+   1          #include <REGX52.H>
+   2          #include "oled.h"
+   3          #include "Key.h"
+   4          #include "Motor.h"
+   5          #include "Delay.h"
+   6          #include "Motor_PID.h"
+   7          #include "Gyro_PID.h"
+   8          #include "GrayscaleSensor.h"
+   9          #include "Driving.h"
+  10          
+  11          unsigned char Task2_KeyNumber;
+  12          
+  13          unsigned char Task2()
+  14          {
+  15   1        last_error = 0;
+  16   1        Base_Speed=20;
+  17   1        
+  18   1        OLED_Clear();
+  19   1        OLED_ShowString(44,0,"Task2",16);
+  20   1        OLED_ShowString(36,3,"Running",16);
+  21   1        Motor_Init();
+  22   1        
+  23   1        Motor_Set(Base_Speed,Base_Speed);
+  24   1        
+  25   1        while(1)
+  26   1        {
+  27   2          Task2_KeyNumber=Key();
+  28   2          if(Task2_KeyNumber)
+  29   2          {
+  30   3            switch(Task2_KeyNumber)
+  31   3            {
+  32   4              case 4:Motor_Set(0,0);return 1;break;
+  33   4              case 5:Motor_Set(0,0);return 0;break;
+  34   4            }
+  35   3          }
+  36   2          
+  37   2          PID_Control_Loop();
+  38   2          
+  39   2          if (All_Black_Flag())
+  40   2          {
+  41   3            AV_Prompt();
+  42   3            while(1)
+  43   3            {
+  44   4              Task2_KeyNumber=Key();
+  45   4              if(Task2_KeyNumber)
+  46   4              {
+  47   5                switch(Task2_KeyNumber)
+  48   5                {
+  49   6                  case 4:Motor_Set(0,0);return 1;break;
+  50   6                  case 5:Motor_Set(0,0);return 0;break;
+  51   6                }
+  52   5              }
+  53   4            }
+  54   3          }
+C51 COMPILER V9.54   TASK2                                                                 12/25/2025 21:48:40 PAGE 2   
+
+  55   2        }
+  56   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    119    ----
+   CONSTANT SIZE    =     14    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      1    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

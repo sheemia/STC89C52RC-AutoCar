@@ -1,0 +1,121 @@
+C51 COMPILER V9.54   TASK4                                                                 12/27/2025 22:32:41 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE TASK4
+OBJECT MODULE PLACED IN .\Objects\Task4.obj
+COMPILER INVOKED BY: D:\Program Files\Keil_v5\C51\BIN\C51.EXE Task4.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(
+                    -.\Listings\Task4.lst) TABS(2) OBJECT(.\Objects\Task4.obj)
+
+line level    source
+
+   1          #include <REGX52.H>
+   2          #include "oled.h"
+   3          #include "Key.h"
+   4          #include "Motor.h"
+   5          #include "Delay.h"
+   6          #include "Motor_PID.h"
+   7          #include "Gyro_PID.h"
+   8          #include "GrayscaleSensor.h"
+   9          #include "Driving.h"
+  10          
+  11          unsigned char Task4_KeyNumber;
+  12          
+  13          unsigned char Task4()
+  14          {
+  15   1        last_error = 0;
+  16   1        Base_Speed=18;
+  17   1        
+  18   1        OLED_Clear();
+  19   1        OLED_ShowString(44,0,"Task5",16);
+  20   1        OLED_ShowString(36,3,"Calib..",16);
+  21   1        Motor_Init();
+  22   1        Delay(100);
+  23   1        Reset_Gyro_PID();
+  24   1        
+  25   1        OLED_ShowString(36,3,"       ",16);
+  26   1        OLED_ShowString(36,3,"Running",16);
+  27   1        
+  28   1        while(1)
+  29   1        {
+  30   2          Task4_KeyNumber=Key();
+  31   2          if(Task4_KeyNumber)
+  32   2          {
+  33   3            switch(Task4_KeyNumber)
+  34   3            {
+  35   4              case 4:Motor_Set(0,0);return 1;break;
+  36   4              case 5:Motor_Set(0,0);return 0;break;
+  37   4            }
+  38   3          }
+  39   2          
+  40   2          Get_NewVal();
+  41   2          while(All_White_Flag())
+  42   2          {
+  43   3            Get_NewVal();
+  44   3            PID_Gyro_Straight_Loop();
+  45   3          }
+  46   2          //到达B点  
+  47   2          AV_Prompt();
+  48   2          
+  49   2          Get_NewVal();
+  50   2          while(!All_Black_Flag())
+  51   2          {
+  52   3            PID_Control_Loop();
+  53   3          }
+  54   2          //到达C点
+C51 COMPILER V9.54   TASK4                                                                 12/27/2025 22:32:41 PAGE 2   
+
+  55   2          AV_Prompt();
+  56   2          Forward_ABit();
+  57   2          
+  58   2          Base_Speed=12;
+  59   2          
+  60   2          Get_NewVal();
+  61   2          while(!All_Black_Flag())
+  62   2          {
+  63   3            PID_Control_Loop();
+  64   3          }
+  65   2          //到达D点
+  66   2          AV_Prompt();
+  67   2          Forward_ABit();
+  68   2          
+  69   2          Base_Speed=18;
+  70   2          
+  71   2          Get_NewVal();
+  72   2          while(!All_White_Flag())
+  73   2          {
+  74   3            PID_Control_Loop();
+  75   3          }
+  76   2          //到达A点
+  77   2          AV_Prompt();
+  78   2          
+  79   2          while(1)
+  80   2          {
+  81   3            Task4_KeyNumber=Key();
+  82   3            if(Task4_KeyNumber)
+  83   3            {
+  84   4              switch(Task4_KeyNumber)
+  85   4              {
+  86   5                case 4:Motor_Set(0,0);return 1;break;
+  87   5                case 5:Motor_Set(0,0);return 0;break;
+  88   5              }
+  89   4            }
+  90   3          }
+  91   2          
+  92   2        }
+  93   1      }
+  94          
+  95          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    225    ----
+   CONSTANT SIZE    =     30    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      1    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

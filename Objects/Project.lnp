@@ -1,0 +1,24 @@
+".\Objects\main.obj",
+".\Objects\Delay.obj",
+".\Objects\GrayscaleSensor.obj",
+".\Objects\I2C.obj",
+".\Objects\oled.obj",
+".\Objects\Key.obj",
+".\Objects\Timer2.obj",
+".\Objects\Menu.obj",
+".\Objects\Task1.obj",
+".\Objects\Motor.obj",
+".\Objects\Task2.obj",
+".\Objects\Task3.obj",
+".\Objects\Task4.obj",
+".\Objects\Task5.obj",
+".\Objects\Task6.obj",
+".\Objects\Task7.obj",
+".\Objects\UART_JY61P.obj",
+".\Objects\Motor_PID.obj",
+".\Objects\Gyro_PID.obj",
+".\Objects\Driving.obj",
+".\Objects\Home.obj" 
+TO ".\Objects\Project" 
+PRINT(".\Listings\Project.m51") RAMSIZE(256) 
+DISABLEWARNING (16) 

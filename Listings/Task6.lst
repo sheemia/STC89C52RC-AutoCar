@@ -1,0 +1,145 @@
+C51 COMPILER V9.54   TASK6                                                                 12/25/2025 21:47:10 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE TASK6
+OBJECT MODULE PLACED IN .\Objects\Task6.obj
+COMPILER INVOKED BY: D:\Program Files\Keil_v5\C51\BIN\C51.EXE Task6.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(
+                    -.\Listings\Task6.lst) TABS(2) OBJECT(.\Objects\Task6.obj)
+
+line level    source
+
+   1          #include <REGX52.H>
+   2          #include "oled.h"
+   3          #include "Key.h"
+   4          #include "Motor.h"
+   5          #include "Delay.h"
+   6          #include "GrayscaleSensor.h"
+   7          #include "UART_JY61P.h"
+   8          #include "Motor_PID.h"
+   9          #include "Gyro_PID.h"
+  10          #include "Driving.h"
+  11          
+  12          unsigned char Task6_KeyNumber,Laps=1;
+  13          
+  14          unsigned char Task6()
+  15          {
+  16   1        unsigned int i;
+  17   1        last_error = 0;
+  18   1        Base_Speed=0;
+  19   1        Motor_Set(Base_Speed,Base_Speed);
+  20   1        
+  21   1        OLED_Clear();
+  22   1        OLED_ShowString(44,0,"Task6",16);
+  23   1        
+  24   1        OLED_ShowString(8, 2, "Number of laps", 16);
+  25   1        
+  26   1        while(Task6_KeyNumber!=3)
+  27   1        {
+  28   2          OLED_ShowNum(60,4,Laps,1,16);
+  29   2          Task6_KeyNumber=Key();
+  30   2          if(Task6_KeyNumber==1)
+  31   2          {
+  32   3            Laps++;
+  33   3            if(Laps==6) Laps=1;
+  34   3          }
+  35   2          if(Task6_KeyNumber==2)
+  36   2          {
+  37   3            Laps--;
+  38   3            if(Laps==0) Laps=5;
+  39   3          }
+  40   2        }
+  41   1        
+  42   1        OLED_ShowString(8, 2, "              ", 16);
+  43   1        OLED_ShowString(60, 4, " ", 16);
+  44   1        
+  45   1        //陀螺仪校准
+  46   1        OLED_ShowString(36,3,"Calib..",16);
+  47   1        Motor_Init();
+  48   1        Delay(100);
+  49   1        Reset_Gyro_PID();
+  50   1        
+  51   1        OLED_ShowString(36,3,"       ",16);
+  52   1        OLED_ShowString(36,3,"Running",16);
+  53   1        
+  54   1        while(1)
+C51 COMPILER V9.54   TASK6                                                                 12/25/2025 21:47:10 PAGE 2   
+
+  55   1        {
+  56   2        Task6_KeyNumber=Key();
+  57   2          if(Task6_KeyNumber)
+  58   2          {
+  59   3            switch(Task6_KeyNumber)
+  60   3            {
+  61   4              case 4:Motor_Set(0,0);return 1;break;
+  62   4              case 5:Motor_Set(0,0);return 0;break;
+  63   4            }
+  64   3          }
+  65   2          while(Laps--)
+  66   2          {
+  67   3            Base_Speed=20;
+  68   3            i=0;
+  69   3            Get_NewVal();
+  70   3            while(!All_Black_Flag())
+  71   3            {
+  72   4              PID_Control_Loop();
+  73   4            }
+  74   3            //到达D点
+  75   3            AV_Prompt();
+  76   3            Forward_ABit();
+  77   3            Base_Speed=12;
+  78   3            PID_Control_Loop();
+  79   3            while(!All_Black_Flag())
+  80   3            {
+  81   4              PID_Control_Loop();
+  82   4            }
+  83   3            //到达C点
+  84   3            AV_Prompt();
+  85   3            Forward_ABit();
+  86   3            Base_Speed=18;
+  87   3            PID_Control_Loop();
+  88   3            while(!All_White_Flag())
+  89   3            {
+  90   4              PID_Control_Loop();
+  91   4            }
+  92   3            //到达B点  
+  93   3            AV_Prompt();
+  94   3            
+  95   3            while(All_White_Flag())
+  96   3            {
+  97   4              Get_NewVal();
+  98   4              PID_Gyro_Straight_Loop();
+  99   4            }
+ 100   3            AV_Prompt();
+ 101   3          }
+ 102   2          while(1)
+ 103   2          {
+ 104   3            Task6_KeyNumber=Key();
+ 105   3            if(Task6_KeyNumber)
+ 106   3            {
+ 107   4              switch(Task6_KeyNumber)
+ 108   4              {
+ 109   5                case 4:Motor_Set(0,0);return 1;break;
+ 110   5                case 5:Motor_Set(0,0);return 0;break;
+ 111   5              }
+ 112   4            }
+ 113   3          }
+ 114   2        }
+ 115   1      }
+ 116          
+C51 COMPILER V9.54   TASK6                                                                 12/25/2025 21:47:10 PAGE 3   
+
+ 117          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    348    ----
+   CONSTANT SIZE    =     62    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      2       2
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

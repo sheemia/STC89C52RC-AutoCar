@@ -1,0 +1,134 @@
+C51 COMPILER V9.54   I2C                                                                   12/24/2025 19:07:12 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE I2C
+OBJECT MODULE PLACED IN .\Objects\I2C.obj
+COMPILER INVOKED BY: D:\Program Files\Keil_v5\C51\BIN\C51.EXE I2C.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\
+                    -Listings\I2C.lst) TABS(2) OBJECT(.\Objects\I2C.obj)
+
+line level    source
+
+   1          #include <REGX52.H>
+   2          #include <INTRINS.H>
+   3          
+   4          sbit I2C_SDA=P0^1;
+   5          sbit I2C_SCL=P0^2;
+   6          
+   7          void Delay5us()   //@11.0592MHz
+   8          {
+   9   1        _nop_(); _nop_();
+  10   1      }
+  11          
+  12          /**
+  13            * @brief  I2C Start.
+  14            * @param  None
+  15            * @retval None
+  16            */
+  17          void I2C_Start()
+  18          {
+  19   1        I2C_SDA=1;
+  20   1        I2C_SCL=1;
+  21   1        Delay5us();
+  22   1        I2C_SDA=0;
+  23   1        Delay5us();
+  24   1        I2C_SCL=0;
+  25   1      }
+  26          
+  27          /**
+  28            * @brief  I2C Stop.
+  29            * @param  None
+  30            * @retval None
+  31            */
+  32          void I2C_Stop()
+  33          {
+  34   1        I2C_SDA=0;
+  35   1        I2C_SCL=1;
+  36   1        Delay5us();
+  37   1        I2C_SDA=1;
+  38   1        Delay5us();
+  39   1      }
+  40          
+  41          /**
+  42            * @brief  Send a byte via I2C.
+  43            * @param  Byte: Byte to be sent.
+  44            * @retval None.
+  45            */
+  46          void I2C_SendByte(unsigned char Byte)
+  47          {
+  48   1        unsigned char i=0;
+  49   1        for(i=0;i<8;i++)
+  50   1        {
+  51   2          I2C_SDA=Byte&(0x80>>i);
+  52   2          I2C_SCL=1;
+  53   2          Delay5us();
+  54   2          I2C_SCL=0;
+C51 COMPILER V9.54   I2C                                                                   12/24/2025 19:07:12 PAGE 2   
+
+  55   2          Delay5us();
+  56   2        }
+  57   1      }
+  58          
+  59          /**
+  60            * @brief  I2C Receive one byte.
+  61            * @param  None.
+  62            * @retval One byte of data recieve.
+  63            */
+  64          unsigned char I2C_ReceiveByte()
+  65          {
+  66   1        unsigned char i,Byte=0x00;
+  67   1        I2C_SDA=1;
+  68   1        for(i=0;i<8;i++)
+  69   1        {
+  70   2          I2C_SCL=1;
+  71   2          Delay5us();
+  72   2          if(I2C_SDA) Byte|=(0x80>>i);
+  73   2          I2C_SCL=0;
+  74   2          Delay5us();
+  75   2        }
+  76   1        return Byte;
+  77   1      }
+  78          
+  79          /**
+  80            * @brief  I2C sends acknowledgement.
+  81            * @param  AckBit: Acknowledgement bit, 0 indicates acknowledgement, 1 indicates no acknowledgement.
+  82            * @retval None.
+  83            */
+  84          void I2C_SendAck(unsigned char AckBit)
+  85          {
+  86   1        I2C_SDA=AckBit;
+  87   1        I2C_SCL=1;
+  88   1        I2C_SCL=0;
+  89   1      }
+  90          
+  91          /**
+  92            * @brief  I2C receive acknowledgement bit.
+  93            * @param  None.
+  94            * @retval The acknowledgement bit received, 0 indicates acknowledgement, 1 indicates no acknowledgement.
+  95            */
+  96          unsigned char I2C_ReceiveAck()
+  97          {
+  98   1        unsigned char AckBit=0;
+  99   1        I2C_SDA=1;
+ 100   1        I2C_SCL=1;
+ 101   1        Delay5us();
+ 102   1        AckBit=I2C_SDA;
+ 103   1        I2C_SCL=0;
+ 104   1        Delay5us();
+ 105   1        return AckBit;
+ 106   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    142    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+C51 COMPILER V9.54   I2C                                                                   12/24/2025 19:07:12 PAGE 3   
+
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

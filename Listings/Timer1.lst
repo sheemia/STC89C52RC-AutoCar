@@ -1,0 +1,59 @@
+C51 COMPILER V9.54   TIMER1                                                                11/24/2025 15:11:30 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE TIMER1
+OBJECT MODULE PLACED IN .\Objects\Timer1.obj
+COMPILER INVOKED BY: D:\Program Files\Keil_v5\C51\BIN\C51.EXE Timer1.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT
+                    -(.\Listings\Timer1.lst) TABS(2) OBJECT(.\Objects\Timer1.obj)
+
+line level    source
+
+   1          #include <REGX52.H>
+   2          
+   3          /**
+   4            * @brief  Timer0 initialization,1ms@11.0592MHz.
+   5            * @param  none
+   6            * @retval none
+   7            */
+   8          
+   9          void Timer1_Init()
+  10          {
+  11   1        TMOD &= 0x0F;   //设置定时器模式
+  12   1        TMOD |= 0x10;   //设置定时器模式
+  13   1        TL1 = 0xCD;   //设置定时初值
+  14   1        TH1 = 0xD4;   //设置定时初值
+  15   1        TF1 = 0;    //清除TF1标志
+  16   1        TR1 = 1;    //定时器1开始计时
+  17   1        ET1=1;
+  18   1        EA=1;
+  19   1        PT1=0;
+  20   1      }
+  21          
+  22          /*Timer interrupt function template.
+  23          void Timer1_Routine() interrupt 3
+  24          {
+  25            static unsigned int T1Count;
+  26            TL1 = 0xCD;
+  27            TH1 = 0xD4;
+  28            T0Count++;
+  29            if(T1Count==1000)
+  30            {
+  31              T1Count=0;
+  32              
+  33            }
+  34          }
+  35          */
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     23    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,82 @@
+C51 COMPILER V9.54   GYRO_PID                                                              12/25/2025 20:38:17 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE GYRO_PID
+OBJECT MODULE PLACED IN .\Objects\Gyro_PID.obj
+COMPILER INVOKED BY: D:\Program Files\Keil_v5\C51\BIN\C51.EXE Gyro_PID.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRI
+                    -NT(.\Listings\Gyro_PID.lst) TABS(2) OBJECT(.\Objects\Gyro_PID.obj)
+
+line level    source
+
+   1          #include <REGX52.H>
+   2          #include "Motor.h"
+   3          #include "UART_JY61P.h"
+   4          #include "Driving.h"
+   5          
+   6          int Gyro_Z_Raw;
+   7          
+   8          //陀螺仪直线 PID 专用参数
+   9          // 使用整数运算优化性能
+  10          int Gyro_Kp_Mult = 3;    // P 分子
+  11          int Gyro_Kd_Mult = 25;   // D 分子
+  12          int Gyro_Divisor = 1000;  // 公共分母
+  13          
+  14          // 陀螺仪 PID 过程变量
+  15          static short idata gyro_last_error = 0;
+  16          
+  17          // 重置陀螺仪PID状态
+  18          void Reset_Gyro_PID()
+  19          {
+  20   1          gyro_last_error = 0;
+  21   1          Reset_Yaw_Reference();
+  22   1      }
+  23          
+  24          //陀螺仪直线 PID 控制循环
+  25          void PID_Gyro_Straight_Loop()
+  26          {
+  27   1          short error;
+  28   1          long p_term, d_term;
+  29   1          char pid_output;
+  30   1          char final_speed_L, final_speed_R;
+  31   1      
+  32   1          //获取误差
+  33   1          error = 0 - Get_Relative_Yaw(); 
+  34   1      
+  35   1          //计算 P 项
+  36   1          p_term = (long)error * Gyro_Kp_Mult;
+  37   1      
+  38   1          //计算 D 项
+  39   1          d_term = (long)(error - gyro_last_error) * Gyro_Kd_Mult;
+  40   1      
+  41   1          //计算总输出
+  42   1          pid_output = (int)((p_term + d_term) / Gyro_Divisor);
+  43   1      
+  44   1          //更新历史误差
+  45   1          gyro_last_error = error;
+  46   1      
+  47   1          //输出限幅
+  48   1          if(pid_output > 45) pid_output = 45;
+  49   1          if(pid_output < -45) pid_output = -45;
+  50   1      
+  51   1          //执行电机控制
+  52   1          final_speed_L = Base_Speed - pid_output;
+  53   1          final_speed_R = Base_Speed + pid_output;
+  54   1      
+C51 COMPILER V9.54   GYRO_PID                                                              12/25/2025 20:38:17 PAGE 2   
+
+  55   1          Motor_Set(final_speed_L, final_speed_R);
+  56   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    178    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      8      10
+   IDATA SIZE       =      2    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

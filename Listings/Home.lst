@@ -1,0 +1,61 @@
+C51 COMPILER V9.54   HOME                                                                  12/25/2025 20:40:44 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE HOME
+OBJECT MODULE PLACED IN .\Objects\Home.obj
+COMPILER INVOKED BY: D:\Program Files\Keil_v5\C51\BIN\C51.EXE Home.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.
+                    -\Listings\Home.lst) TABS(2) OBJECT(.\Objects\Home.obj)
+
+line level    source
+
+   1          #include <REGX52.H>
+   2          #include <INTRINS.H>
+   3          #include <oled.h>
+   4          #include "GrayscaleSensor.h"
+   5          #include "Key.h"
+   6          
+   7          unsigned char Home()
+   8          {
+   9   1        unsigned char i;
+  10   1        unsigned char SensorSum=0;
+  11   1        unsigned char Sensor[8];
+  12   1        
+  13   1        unsigned char Home_KeyNumber=0;
+  14   1        
+  15   1        OLED_Clear();
+  16   1        
+  17   1        OLED_ShowString(48,0,"Home",16);
+  18   1        OLED_ShowString(24,2,"GS Sensor:",16);
+  19   1        OLED_ShowString(0,6,"Press to Menu...",16);
+  20   1        
+  21   1        while(1)
+  22   1        {
+  23   2          Home_KeyNumber=Key();
+  24   2          if(Home_KeyNumber==3)
+  25   2          {
+  26   3            return 1;
+  27   3          }
+  28   2          
+  29   2          SensorSum=GrayscaleSensor_ReadByte();
+  30   2          for(i=8;i>0;i--)
+  31   2          {
+  32   3            Sensor[i-1]=(SensorSum>>(i-1))&0x01;
+  33   3            OLED_ShowNum(17*(i-1)+1,4,Sensor[i-1],1,16);
+  34   3            //显示八个灰度传感器的状态
+  35   3          }
+  36   2        }
+  37   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    142    ----
+   CONSTANT SIZE    =     33    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----      11
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

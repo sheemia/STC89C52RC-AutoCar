@@ -1,0 +1,106 @@
+C51 COMPILER V9.54   MOTOR_PID                                                             12/26/2025 15:03:28 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE MOTOR_PID
+OBJECT MODULE PLACED IN .\Objects\Motor_PID.obj
+COMPILER INVOKED BY: D:\Program Files\Keil_v5\C51\BIN\C51.EXE Motor_PID.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PR
+                    -INT(.\Listings\Motor_PID.lst) TABS(2) OBJECT(.\Objects\Motor_PID.obj)
+
+line level    source
+
+   1          #include <REGX52.H>
+   2          #include "Motor.h"
+   3          #include "GrayscaleSensor.h"
+   4          #include "Driving.h"
+   5          
+   6          //PID 核心参数
+   7          char Kp = 4;  // P: 反应力度 (越大转向越猛)
+   8          char Ki = 0;   // I: 消除静差 (巡线通常设为0，除非走很慢)
+   9          char Kd = 25;  // D: 抑制震荡 (越大越平滑，但太大电机抖动)
+  10          
+  11          // PID 过程变量
+  12          int last_error = 0;   // 上一次误差
+  13          int integral = 0;   // 积分累计
+  14          
+  15          //获取误差
+  16          int Get_Error() 
+  17          {
+  18   1          val = GrayscaleSensor_ReadByte();
+  19   1          val = ~val; 
+  20   1      
+  21   1          if (val == 0) return last_error; 
+  22   1      
+  23   1          //急弯
+  24   1          if ((val & 0xE0) == 0xE0 && (val & 0x01) == 0) return 80; 
+  25   1          if ((val & 0x07) == 0x07 && (val & 0x80) == 0) return -80; 
+  26   1      
+  27   1          //普通巡线
+  28   1          if (val & 0x80) return 30;   
+  29   1          if (val & 0x01) return -30;  
+  30   1      
+  31   1          if (val & 0x40) return 20;   
+  32   1          if (val & 0x02) return -20;  
+  33   1      
+  34   1          if (val & 0x20) return 10;   
+  35   1          if (val & 0x04) return -10;  
+  36   1      
+  37   1          //轻微偏离
+  38   1          if (val & 0x10) return 5;   
+  39   1          if (val & 0x08) return -5;  
+  40   1      
+  41   1          // 直行
+  42   1          if (val & 0x18) return 0;   
+  43   1      
+  44   1          return last_error;
+  45   1      }
+  46          
+  47          void PID_Control_Loop() 
+  48          {
+  49   1          int error;
+  50   1          int P, I, D;
+  51   1          int pid_out_temp; // 临时存储放大后的PID结果
+  52   1          char pid_out;     // 最终输出给电机
+  53   1          
+  54   1          // 获取误差
+C51 COMPILER V9.54   MOTOR_PID                                                             12/26/2025 15:03:28 PAGE 2   
+
+  55   1          error = Get_Error();
+  56   1          
+  57   1          // 计算 P
+  58   1          P = Kp * error;
+  59   1          
+  60   1          // 计算 I
+  61   1          integral += error;
+  62   1          if (integral > 1000) integral = 1000;
+  63   1          if (integral < -1000) integral = -1000;
+  64   1          I = Ki * integral;
+  65   1          
+  66   1          // 计算 D
+  67   1          D = Kd * (error - last_error);
+  68   1          
+  69   1          // 计算总输出
+  70   1          pid_out_temp = P + I + D;
+  71   1          
+  72   1          //比例还原
+  73   1          pid_out = (char)(pid_out_temp / 10);
+  74   1          
+  75   1          // 更新历史误差
+  76   1          last_error = error;
+  77   1          
+  78   1          // 执行电机控制
+  79   1          Motor_Set(Base_Speed + pid_out, Base_Speed - pid_out);
+  80   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    309    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      7       2
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

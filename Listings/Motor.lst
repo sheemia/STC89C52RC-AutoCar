@@ -1,0 +1,141 @@
+C51 COMPILER V9.54   MOTOR                                                                 12/25/2025 19:44:23 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE MOTOR
+OBJECT MODULE PLACED IN .\Objects\Motor.obj
+COMPILER INVOKED BY: D:\Program Files\Keil_v5\C51\BIN\C51.EXE Motor.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(
+                    -.\Listings\Motor.lst) TABS(2) OBJECT(.\Objects\Motor.obj)
+
+line level    source
+
+   1          #include <REGX52.H>
+   2          #include "GrayscaleSensor.h"
+   3          #include "Delay.h"
+   4          #include "Gyro_PID.h"
+   5          #include "UART_JY61P.h"
+   6          
+   7          sbit PWMA = P1^1;
+   8          sbit AIN1 = P1^3;
+   9          sbit AIN2 = P1^2;
+  10          
+  11          sbit PWMB = P1^7;
+  12          sbit BIN1 = P1^5;
+  13          sbit BIN2 = P1^6;
+  14          
+  15          sbit STBY = P1^4;
+  16          
+  17          unsigned char Base_Speed;
+  18          
+  19          unsigned char speedA;
+  20          unsigned char speedB;
+  21          unsigned char pwmCountA,pwmCountB;
+  22          
+  23          /*********** 定时器0初始化（PWM用） ***********/
+  24          void Timer0_Init(void)//100us
+  25          {
+  26   1        TMOD &= 0xF0;     //设置定时器模式
+  27   1        TMOD |= 0x01;     //设置定时器模式
+  28   1        TL0 = 0xA4;       //设置定时初始值
+  29   1        TH0 = 0xFF;       //设置定时初始值
+  30   1        TF0 = 0;        //清除TF0标志
+  31   1        TR0 = 1;        //定时器0开始计时
+  32   1      
+  33   1        ET0=1;
+  34   1        EA=1;
+  35   1        PT0=0;
+  36   1      }
+  37          
+  38          /*********** 定时器0中断函数（PWM输出） ***********/
+  39          void Timer0_Routine(void) interrupt 1
+  40          {
+  41   1        TL0 = 0xA4;   //设置定时初值
+  42   1        TH0 = 0xFF;   //设置定时初值
+  43   1        pwmCountA++;
+  44   1        pwmCountB++;
+  45   1        if(pwmCountA >= 100) pwmCountA = 0;
+  46   1        if(pwmCountB >= 100) pwmCountB = 0;
+  47   1        PWMA = (pwmCountA < speedA) ? 1 : 0;
+  48   1        PWMB = (pwmCountB < speedB) ? 1 : 0;
+  49   1      }
+  50          
+  51          //A电机：正转
+  52          void MotorA_Forward(void)
+  53          {
+  54   1          AIN1 = 1;
+C51 COMPILER V9.54   MOTOR                                                                 12/25/2025 19:44:23 PAGE 2   
+
+  55   1          AIN2 = 0;
+  56   1      }
+  57          
+  58          //A电机：反转
+  59          void MotorA_Backward(void)
+  60          {
+  61   1          AIN1 = 0;
+  62   1          AIN2 = 1;
+  63   1      }
+  64          
+  65          //A电机：刹车
+  66          void MotorA_Brake(void)
+  67          {
+  68   1          AIN1 = 1;
+  69   1          AIN2 = 1;
+  70   1      }
+  71          
+  72          //A电机：停止
+  73          void MotorA_Stop(void)
+  74          {
+  75   1          AIN1 = 0;
+  76   1          AIN2 = 0;
+  77   1      }
+  78          
+  79          //B电机：正转
+  80          void MotorB_Forward(void)
+  81          {
+  82   1          BIN1 = 1;
+  83   1          BIN2 = 0;
+  84   1      }
+  85          
+  86          //B电机：反转
+  87          void MotorB_Backward(void)
+  88          {
+  89   1          BIN1 = 0;
+  90   1          BIN2 = 1;
+  91   1      }
+  92          
+  93          //B电机：刹车
+  94          void MotorB_Brake(void)
+  95          {
+  96   1          BIN1 = 1;
+  97   1          BIN2 = 1;
+  98   1      }
+  99          
+ 100          //B电机：停止
+ 101          void MotorB_Stop(void)
+ 102          {
+ 103   1          BIN1 = 0;
+ 104   1          BIN2 = 0;
+ 105   1      }
+ 106          
+ 107          //电机初始化
+ 108          void Motor_Init()
+ 109          {
+ 110   1        STBY = 1;
+ 111   1        Timer0_Init();
+ 112   1      }
+ 113          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+C51 COMPILER V9.54   MOTOR                                                                 12/25/2025 19:44:23 PAGE 3   
+
+   CODE SIZE        =    131    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      5    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
